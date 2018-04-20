@@ -1,7 +1,21 @@
 """
  Author : Md Moniruzzaman Monir
 
+ Here, I use 'Adjacency List' approach for storing the graph. DFS is a common algorithm for searching a graph.
+ In DFS, we start at the root (or another arbitrarily selected node) and explore each branch completely before
+ moving on to the next branch. That is, we go "DEEP" first (hence depth-first search) before we go 'WIDE'.
+
+
+ Two class definition is used : one is 'Vertex' class and another is 'Graph' class.
+ Vertex class represents the vertex objects. Every vertex stores a list of it's adjacent vertices (Neighbors).
+
+ The "Graph" class is used because, unlike in a tree, we can't necessarily reach all nodes from a single node.
+ A graph can be disconnected. In that case, we build a BFS "forest" after running BFS algo on the graph.
+
+ Vertex color : 'white' --> Unvisited, 'grey' --> Under processing, 'black' --> Visited
+
 """
+
 
 class Vertex:
 
@@ -56,7 +70,7 @@ class Graph:
     Depth First Search
     '''
 
-    def depth_first_Search(self, root):
+    def depth_first_search(self, root):
         global time
         time = 1
         self.dfs_visit(root)
@@ -74,6 +88,7 @@ class Graph:
         vertex_obj.finish_time = time
         time = time + 1
 
+
 def main():
     graph = Graph()
     root = Vertex('A')
@@ -89,7 +104,7 @@ def main():
     directed_graph = False
 
     for edge in edges:
-        if directed_graph == True:
+        if directed_graph:
             graph.add_edge(edge[:1], edge[1:])
         else:
             graph.add_edge(edge[:1], edge[1:])
@@ -97,7 +112,7 @@ def main():
 
     graph.print_graph()
 
-    graph.depth_first_Search(root)
+    graph.depth_first_search(root)
 
     # Print timestamps of each vertex
     print(" \n After DFS : \n ")
