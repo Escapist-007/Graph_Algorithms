@@ -1,35 +1,49 @@
-
-'''
+"""
  Author : Md Moniruzzaman Monir
-'''
 
-from collections import  deque
+ Here, I use 'Adjacency List' approach for storing the graph. BFS is a common algorithm for searching a graph.
+ In BFS, we start at the root (or another arbitrarily selected node) and explore each neighbor before going on
+ to any of their children. That is, we go "WIDE" (hence breadth-first search) before we go 'DEEP'. So, we can
+ think of this as searching "Level by Level" out from root.
+
+ BFS finds the shortest path (smallest no of edges) between root and any vertex. ***
+
+ Two class definition is used : one is 'Vertex' class and another is 'Graph' class.
+ Vertex class represents the vertex objects. Every vertex stores a list of it's adjacent vertices (Neighbors).
+
+ The "Graph" class is used because, unlike in a tree, we can't necessarily reach all nodes from a single node.
+ A graph can be disconnected. In that case, we build a BFS "forest" after running BFS algo on the graph.
+
+ Vertex color : 'white' --> Unvisited, 'grey' --> Under processing, 'black' --> Visited
+
+"""
+
+from collections import deque
 
 class Vertex:
-
+    # constructor
     def __init__(self, name):
-
         self.name = name
         self.color = 'white'
-
-        self.parent_vertex = None
+        self.parent_vertex_name = None
+        # (smallest no of edges, or shortest path) from root to this vertex(self)
         self.distance_from_root = -1
-
         self.neighbors_list = []
 
     def add_neighbor(self, vertex_name):
-
         if vertex_name not in set(self.neighbors_list):
             self.neighbors_list.append(vertex_name)
+            # There must be an order of the neighbors
             self.neighbors_list.sort()
             return True
         else:
             return False
 
 class Graph:
-
+    # constructor
     def __init__(self):
-        self.vertices = {}   # A dictionary (Key,Value) for storing the vertices. Here, Key --> Vertex Name and Value --> Vertex Object
+        # A dictionary (Key,Value) for storing the vertices || Key --> Vertex Name, Value --> Vertex Object
+        self.vertices = {}
 
     def add_vertex(self, vertex_obj):
         if vertex_obj.name not in self.vertices:
@@ -38,15 +52,15 @@ class Graph:
         else:
             return False
 
-    def add_edge(self, u, v):  # u and v are vertex name. (u -> v)
+    # u and v are vertex name (u -> v)
+    def add_edge(self, u, v):
         if u in self.vertices and v in self.vertices:
-            for i in self.vertices:
-                if i == u:
-                    self.vertices[i].add_neighbor(v)
+            for vertex_name in self.vertices:
+                if vertex_name == u:
+                    self.vertices[vertex_name].add_neighbor(v)
             return True
         else:
             return False
-
 
     def print_graph(self):
         print()
@@ -55,66 +69,65 @@ class Graph:
             print("  " + i + "    --> " + str(self.vertices[i].neighbors_list))
 
     '''
-        Breadth First Search
+    Breadth First Search
     '''
 
     def breadth_first_search(self, vertex_obj):
         vertex_obj.color = 'grey'
-        vertex_obj.parent_vertex = None
+        vertex_obj.parent_vertex_name = None
         vertex_obj.distance_from_root = 0
 
+        # Queue Data Structure (FIFO)
         queue = deque([])
         queue.append(vertex_obj)
 
         while True:
-
             if len(queue) == 0:
                 break
 
             cur_vertex_obj = queue.popleft()
 
-            for i in cur_vertex_obj.neighbors_list:
-                if self.vertices[i].color == 'white':
-                    self.vertices[i].color = 'grey'
-                    self.vertices[i].parent_vertex = cur_vertex_obj
-                    self.vertices[i].distance_from_root = cur_vertex_obj.distance_from_root + 1
-                    queue.append(self.vertices[i])
+            for neighbor in cur_vertex_obj.neighbors_list:
+                if self.vertices[neighbor].color == 'white':
+                    self.vertices[neighbor].color = 'grey'
+                    self.vertices[neighbor].parent_vertex_name = cur_vertex_obj.name
+                    self.vertices[neighbor].distance_from_root = cur_vertex_obj.distance_from_root + 1
+                    queue.append(self.vertices[neighbor])
 
             cur_vertex_obj.color = 'black'
 
+def main():
+    graph = Graph()
+    root = Vertex('A')
+    graph.add_vertex(root)
 
+    # Add vertices B, C, D, E, F, G, H, I, J
+    # ord('a') returns the ascii value of 'a'
 
+    for ascii_value in range(ord('B'), ord('K')):
+        graph.add_vertex(Vertex(chr(ascii_value)))
 
-'''
- Driver code
-'''
+    edges = ['AB', 'AE', 'BF', 'CG', 'DE', 'DH', 'EH', 'FG', 'FI', 'FJ', 'GJ', 'HI']
 
-graph = Graph()
-root  = Vertex('A')
-graph.add_vertex(root)
+    directed_graph = False
 
-for i in range(ord('B'), ord('F')):     # Add vertices B, C, D, E
-    graph.add_vertex(Vertex(chr(i)))
+    for edge in edges:
+        if directed_graph == True:
+            graph.add_edge(edge[:1], edge[1:])
+        else:
+            graph.add_edge(edge[:1], edge[1:])
+            graph.add_edge(edge[1:], edge[:1])
 
-edges = ['AB', 'AC', 'AD', 'BD', 'AE', 'CD', 'CE', 'DB', 'EB']
+    graph.print_graph()
 
-directed_graph = True   # Track if the graph is directed or undirected
+    graph.breadth_first_search(root)
 
-for edge in edges:
-    if directed_graph == True:
-        graph.add_edge(edge[:1], edge[1:])
-    else:
-        graph.add_edge(edge[:1], edge[1:])
-        graph.add_edge(edge[1:], edge[:1])
+    print(" \n After BFS : \n ")
+    print("Vertex --> Distance From Root / Parent Vertex ")
+    for vertex_name in sorted(graph.vertices):
+        print("  " + vertex_name + "    --> "
+              + str(graph.vertices[vertex_name].distance_from_root) + " / " + str(
+            graph.vertices[vertex_name].parent_vertex_name))
 
-graph.print_graph()
-graph.breadth_first_search(root)
-
-
-for key in sorted(list(graph.vertices.keys())):
-    print(key + str(graph.vertices[key].neighbors_list) + "  " + str(graph.vertices[key].distance_from_root))
-
-
-
-
-
+if __name__ == '__main__':
+    main()

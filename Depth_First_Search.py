@@ -1,29 +1,32 @@
+"""
+ Author : Md Moniruzzaman Monir
 
-    # Author : Md Moniruzzaman Monir
+"""
 
 class Vertex:
 
     def __init__(self, name):
-        self.name = name                 # Name of the vertex
-        self.color = 'white'             # 'white' --> Unvisited, 'grey' --> Under processing, 'black' --> Visited
+        self.name = name
+        self.color = 'white'            
         self.discover_time = 0
         self.finish_time = 0
-        self.neighbors_list = []         # List of adjacent vertices (neighbors)
-        # print("Vertex " + str(self.name) + " created" )
+        self.neighbors_list = []         
 
     def add_neighbor(self, vertex_name):
         if vertex_name not in set(self.neighbors_list):
             self.neighbors_list.append(vertex_name)
-            self.neighbors_list.sort()    # There must be an order of the neighbors
+            # There must be an order of the neighbors
+            self.neighbors_list.sort()   
             return True
         else:
             return False
 
 
 class Graph:
-
+    
     def __init__(self):
-        self.vertices = {}    # A dictionary (Key,Value) for storing the vertices. Here, Key --> Vertex Name and Value --> Vertex Object
+        # A dictionary (Key,Value) for storing the vertices || Key --> Vertex Name, Value --> Vertex Object
+        self.vertices = {}    
         self.time = 0
 
     def add_vertex(self, vertex_obj):
@@ -33,11 +36,12 @@ class Graph:
         else:
             return False
 
-    def add_edge(self, u, v):  # u and v are vertex name. (u -> v)
+    # u and v are vertex name. (u -> v)
+    def add_edge(self, u, v):  
         if u in self.vertices and v in self.vertices:
-            for i in self.vertices:
-                if i == u:
-                    self.vertices[i].add_neighbor(v)
+            for vertex_name in self.vertices:
+                if vertex_name == u:
+                    self.vertices[vertex_name].add_neighbor(v)
             return True
         else:
             return False
@@ -49,10 +53,10 @@ class Graph:
             print("  " + i + "    --> " + str(self.vertices[i].neighbors_list))
 
     '''
-        Depth First Search
+    Depth First Search
     '''
 
-    def dfs(self, root):
+    def depth_first_Search(self, root):
         global time
         time = 1
         self.dfs_visit(root)
@@ -70,38 +74,37 @@ class Graph:
         vertex_obj.finish_time = time
         time = time + 1
 
-    '''
-    Driver code
-    '''
+def main():
+    graph = Graph()
+    root = Vertex('A')
+    graph.add_vertex(root)
 
-# Here g is a Unweighted graph
+    # Add vertices B, C, D, E, F, G, H, I, J
+    # ord('a') returns the ascii value of 'a'
+    for ascii_value in range(ord('B'), ord('K')):
+        graph.add_vertex(Vertex(chr(ascii_value)))
 
-g = Graph()
-root = Vertex('A')
-g.add_vertex(root)
+    edges = ['AB', 'AE', 'BF', 'CG', 'DE', 'DH', 'EH', 'FG', 'FI', 'FJ', 'GJ', 'HI']
 
-for i in range(ord('B'), ord('E')):     # Add vertices B, C, D
-    g.add_vertex(Vertex(chr(i)))
+    directed_graph = False
 
-edges = ['AB', 'AC', 'AD', 'BD']
+    for edge in edges:
+        if directed_graph == True:
+            graph.add_edge(edge[:1], edge[1:])
+        else:
+            graph.add_edge(edge[:1], edge[1:])
+            graph.add_edge(edge[1:], edge[:1])
 
-directed_graph = True   # Track if the graph is directed or undirected
+    graph.print_graph()
 
-for e in edges:
+    graph.depth_first_Search(root)
 
-    if directed_graph == True:
-        g.add_edge(e[:1], e[1:])
-    else:
-        g.add_edge(e[:1], e[1:])
-        g.add_edge(e[1:], e[:1])
+    # Print timestamps of each vertex
+    print(" \n After DFS : \n ")
+    print("Vertex --> Discover Time / Finish Time")
+    for vertex_name in sorted(graph.vertices):
+        print("  " + vertex_name + "    --> " +
+              str(graph.vertices[vertex_name].discover_time) + " / " + str(graph.vertices[vertex_name].finish_time))
 
-g.print_graph()
-
-g.dfs(root)  # Depth-First Search on g
-
-# Print timestamps of each vertex
-print()
-print("Vertex --> Discover Time / Finish Time")
-for i in sorted(list(g.vertices)):
-    print("  " + i + "    --> " + str(g.vertices[i].discover_time) + " / " + str(g.vertices[i].finish_time))
-
+if __name__ == '__main__':
+    main()
