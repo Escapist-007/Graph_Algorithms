@@ -20,6 +20,7 @@
 
 from collections import deque
 
+
 class Vertex:
     # constructor
     def __init__(self, name):
@@ -38,6 +39,7 @@ class Vertex:
             return True
         else:
             return False
+
 
 class Graph:
     # constructor
@@ -96,6 +98,7 @@ class Graph:
 
             cur_vertex_obj.color = 'black'
 
+
 def main():
     graph = Graph()
     root = Vertex('A')
@@ -112,7 +115,7 @@ def main():
     directed_graph = False
 
     for edge in edges:
-        if directed_graph == True:
+        if directed_graph:
             graph.add_edge(edge[:1], edge[1:])
         else:
             graph.add_edge(edge[:1], edge[1:])
