@@ -60,7 +60,7 @@ class Graph:
         else:
             return False
 
-    def print_graph(self):  # 'Adjacency List' representation
+    def print_graph(self): 
         print()
         print("Vertex --> Neighbors")
         for i in sorted(list(self.vertices)):
